@@ -1,0 +1,60 @@
+package com.bquarkz.hellskitchen.fsm;
+
+import java.io.Serializable;
+
+public interface IAction< ID extends Serializable, T > extends IFSMTransition< T >, IActionDispatcher
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Static fields
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    static < ID extends Serializable, T > IAction< ID, T > wrap(
+            final IState< ID, T > currentState,
+            final IState< ID, T > nextState,
+            final IFSMTransition< T > transition,
+            final IActionDispatcher dispatcher )
+    {
+        return new IAction< ID, T >()
+        {
+            @Override
+            public T runTransition(
+                    T currentContent,
+                    T nextContent )
+            {
+                final T content = transition.runTransition( currentContent, nextContent );
+                return content;
+            }
+
+            @Override
+            public void dispatch()
+            {
+                dispatcher.dispatch();
+            }
+
+            @Override
+            public IState< ID, T > getCurrentState()
+            {
+                return currentState;
+            }
+
+            @Override
+            public IState< ID, T > getNextState()
+            {
+                return nextState;
+            }
+        };
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Static Methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Default Methods
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // Contracts
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    IState< ID, T > getCurrentState();
+    IState< ID, T > getNextState();
+}
